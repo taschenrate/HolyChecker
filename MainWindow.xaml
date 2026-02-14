@@ -107,7 +107,6 @@
                 <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" Margin="28,48,28,16">
                     <Grid>
 
-                        <!-- СТРАНИЦА: Процессы -->
                         <Grid Visibility="{Binding IsChecked, ElementName=NavProcess, Converter={StaticResource BoolToVis}}">
                             <StackPanel>
                                 <TextBlock Text="Информация о процессе" Style="{StaticResource SectionTitle}" FontSize="22" Margin="0,0,0,4"/>
@@ -211,7 +210,7 @@
                             </StackPanel>
                         </Grid>
 
-                        <!-- СТРАНИЦА: Система -->
+
                         <Grid Visibility="{Binding IsChecked, ElementName=NavSystem, Converter={StaticResource BoolToVis}}">
                             <StackPanel>
                                 <Grid>
@@ -405,7 +404,6 @@
                             </StackPanel>
                         </Grid>
 
-                        <!-- СТРАНИЦА: Приложения -->
                         <Grid Visibility="{Binding IsChecked, ElementName=NavTools, Converter={StaticResource BoolToVis}}">
                             <StackPanel>
                                 <TextBlock Text="Приложения" Style="{StaticResource SectionTitle}" FontSize="22" Margin="0,0,0,4"/>
@@ -472,7 +470,6 @@
                             </StackPanel>
                         </Grid>
 
-                        <!-- СТРАНИЦА: Запросы Everything -->
                         <Grid Visibility="{Binding IsChecked, ElementName=NavQueries, Converter={StaticResource BoolToVis}}">
                             <StackPanel>
                                 <TextBlock Text="Запросы Everything" Style="{StaticResource SectionTitle}" FontSize="22" Margin="0,0,0,4"/>
