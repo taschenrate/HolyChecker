@@ -1,5 +1,18 @@
-bin/
-obj/
-output/
-*.user
+﻿# Build artifacts
+**/bin/
+**/obj/
+
+# User files
 .vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs and runtime artifacts
+**/Logs/
+**/Tools/
+
+# OS
+Thumbs.db
+.DS_Store
