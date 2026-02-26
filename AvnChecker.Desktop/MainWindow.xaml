@@ -1,0 +1,1085 @@
+﻿
+<Window x:Class="AvnChecker.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        xmlns:models="clr-namespace:AvnChecker.Desktop.Models"
+        mc:Ignorable="d"
+        Title="AvnChecker"
+        Height="860"
+        Width="1400"
+        MinHeight="760"
+        MinWidth="1180"
+        WindowStyle="None"
+        ResizeMode="CanResize"
+        WindowStartupLocation="CenterScreen"
+        Background="#090909">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="0"
+                            ResizeBorderThickness="6"
+                            CornerRadius="0"
+                            GlassFrameThickness="0"
+                            UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+    <Window.Resources>
+        <SolidColorBrush x:Key="BgRoot" Color="#090909" />
+        <SolidColorBrush x:Key="BgSidebar" Color="#0C0C0C" />
+        <SolidColorBrush x:Key="BgMain" Color="#101112" />
+        <SolidColorBrush x:Key="CardBg" Color="#131416" />
+        <SolidColorBrush x:Key="CardBorder" Color="#242424" />
+        <SolidColorBrush x:Key="Accent" Color="#FF9800" />
+        <SolidColorBrush x:Key="AccentDark" Color="#2A1905" />
+        <SolidColorBrush x:Key="TextMain" Color="#ECECEC" />
+        <SolidColorBrush x:Key="TextMuted" Color="#9A9A9A" />
+
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource TextMain}" />
+            <Setter Property="FontSize" Value="15" />
+        </Style>
+
+        <Style x:Key="PanelBorder" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBg}" />
+            <Setter Property="BorderBrush" Value="{StaticResource CardBorder}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="16" />
+            <Setter Property="Margin" Value="0,0,0,12" />
+        </Style>
+
+        <Style x:Key="NavButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{StaticResource TextMuted}" />
+            <Setter Property="BorderBrush" Value="#00000000" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="14,0" />
+            <Setter Property="Height" Value="44" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="9">
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#171717" />
+                                <Setter Property="Foreground" Value="#F0F0F0" />
+                            </Trigger>
+                            <Trigger Property="Background" Value="{x:Static Brushes.Orange}">
+                                <Setter TargetName="Root" Property="Background" Value="{StaticResource AccentDark}" />
+                                <Setter TargetName="Root" Property="BorderBrush" Value="#5C340A" />
+                                <Setter Property="Foreground" Value="{StaticResource Accent}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#1F1203" />
+            <Setter Property="Foreground" Value="#EFEFEF" />
+            <Setter Property="BorderBrush" Value="#5B360B" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="14,7" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource Accent}" />
+                                <Setter TargetName="Root" Property="Background" Value="#2A1803" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SecondaryActionButtonStyle" TargetType="Button" BasedOn="{StaticResource ActionButtonStyle}">
+            <Setter Property="Background" Value="#16181C" />
+            <Setter Property="BorderBrush" Value="#343A42" />
+            <Setter Property="Foreground" Value="#DDDDDD" />
+        </Style>
+
+        <Style x:Key="TitleBarButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Margin" Value="6,0,0,0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#E8E8E8" />
+            <Setter Property="BorderBrush" Value="#00000000" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="7">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#1E1E1E" />
+                                <Setter TargetName="Root" Property="BorderBrush" Value="#2E2E2E" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root" Property="Opacity" Value="0.85" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CloseTitleBarButtonStyle" TargetType="Button" BasedOn="{StaticResource TitleBarButtonStyle}">
+            <Setter Property="Foreground" Value="#FFB5B5" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="7">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#5A1717" />
+                                <Setter TargetName="Root" Property="BorderBrush" Value="#8A2727" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root" Property="Opacity" Value="0.85" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="#0F0F10" />
+            <Setter Property="Foreground" Value="{StaticResource TextMain}" />
+            <Setter Property="BorderBrush" Value="{StaticResource CardBorder}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="ColumnHeaderHeight" Value="34" />
+            <Setter Property="GridLinesVisibility" Value="Horizontal" />
+            <Setter Property="HorizontalGridLinesBrush" Value="#242424" />
+            <Setter Property="VerticalGridLinesBrush" Value="#242424" />
+            <Setter Property="RowBackground" Value="#101011" />
+            <Setter Property="AlternatingRowBackground" Value="#151516" />
+            <Setter Property="HeadersVisibility" Value="Column" />
+            <Setter Property="AutoGenerateColumns" Value="False" />
+            <Setter Property="CanUserAddRows" Value="False" />
+            <Setter Property="CanUserDeleteRows" Value="False" />
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="SelectionMode" Value="Single" />
+            <Setter Property="SelectionUnit" Value="FullRow" />
+        </Style>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#1C1D1F" />
+            <Setter Property="Foreground" Value="#D8D8D8" />
+            <Setter Property="BorderBrush" Value="#2D2E31" />
+            <Setter Property="BorderThickness" Value="0,0,1,1" />
+            <Setter Property="Padding" Value="8,0,8,0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style TargetType="DataGridRow">
+            <Setter Property="Background" Value="#101011" />
+            <Setter Property="Foreground" Value="{StaticResource TextMain}" />
+            <Setter Property="BorderBrush" Value="#232323" />
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
+            <Setter Property="Height" Value="32" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1B1307" />
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#2A1905" />
+                    <Setter Property="Foreground" Value="#F5C37A" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ModsRiskRowStyle"
+               TargetType="DataGridRow"
+               BasedOn="{StaticResource {x:Type DataGridRow}}">
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding RiskLevel}" Value="safe" />
+                        <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="False" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="#16261A" />
+                    <Setter Property="BorderBrush" Value="#315A3A" />
+                    <Setter Property="Foreground" Value="#CFF3D8" />
+                </MultiDataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding RiskLevel}" Value="unknown" />
+                        <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="False" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="#2A2312" />
+                    <Setter Property="BorderBrush" Value="#655125" />
+                    <Setter Property="Foreground" Value="#FFE8B8" />
+                </MultiDataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding RiskLevel}" Value="cheat" />
+                        <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="False" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="#34171A" />
+                    <Setter Property="BorderBrush" Value="#7D2A32" />
+                    <Setter Property="Foreground" Value="#FFC9CF" />
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="6,0,6,0" />
+            <Setter Property="Foreground" Value="{StaticResource TextMain}" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Foreground" Value="#F5C37A" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ScrollThumbStyle" TargetType="Thumb">
+            <Setter Property="MinHeight" Value="26" />
+            <Setter Property="MinWidth" Value="26" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border x:Name="ThumbBody"
+                                CornerRadius="6"
+                                Margin="2,1"
+                                Background="#D28218"
+                                BorderBrush="#F6A83D"
+                                BorderThickness="1">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="10" Color="#4CFF9800" ShadowDepth="0" />
+                            </Border.Effect>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ThumbBody" Property="Background" Value="#E79A30" />
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter TargetName="ThumbBody" Property="Background" Value="#FFB243" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ScrollBar">
+            <Setter Property="Background" Value="#0D0F11" />
+            <Setter Property="BorderBrush" Value="#2C2F34" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="7"
+                                Padding="1">
+                            <Track x:Name="PART_Track"
+                                   Orientation="{TemplateBinding Orientation}"
+                                   IsDirectionReversed="True"
+                                   Focusable="False"
+                                   Minimum="{TemplateBinding Minimum}"
+                                   Maximum="{TemplateBinding Maximum}"
+                                   Value="{Binding Value, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                   ViewportSize="{TemplateBinding ViewportSize}">
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource ScrollThumbStyle}" />
+                                </Track.Thumb>
+                            </Track>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Vertical">
+                    <Setter Property="Width" Value="12" />
+                </Trigger>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="Height" Value="12" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="UploadProgressBarStyle" TargetType="ProgressBar">
+            <Setter Property="Foreground" Value="{StaticResource Accent}" />
+            <Setter Property="Background" Value="#1A1310" />
+            <Setter Property="BorderBrush" Value="#4A3316" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid SnapsToDevicePixels="True">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6" />
+                            <Grid x:Name="PART_Track" Margin="1" ClipToBounds="True">
+                                <Border x:Name="PART_Indicator"
+                                        HorizontalAlignment="Left"
+                                        CornerRadius="5">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                            <GradientStop Color="#E48714" Offset="0" />
+                                            <GradientStop Color="#FFB13D" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CircleLinkButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="54" />
+            <Setter Property="Height" Value="54" />
+            <Setter Property="Foreground" Value="#F1F1F1" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root"
+                                CornerRadius="27"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Opacity" Value="0.9" />
+                                <Setter TargetName="Root" Property="BorderBrush" Value="#E8E8E8" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SettingsTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#15171A" />
+            <Setter Property="Foreground" Value="#E6E6E6" />
+            <Setter Property="BorderBrush" Value="#2E333A" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="8,5" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+
+        <Style x:Key="SettingsComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Background" Value="#15171A" />
+            <Setter Property="Foreground" Value="#E6E6E6" />
+            <Setter Property="BorderBrush" Value="#2E333A" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="6,3" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+
+        <Style x:Key="SettingsListBoxStyle" TargetType="ListBox">
+            <Setter Property="Background" Value="#121417" />
+            <Setter Property="Foreground" Value="#E7E7E7" />
+            <Setter Property="BorderBrush" Value="#2B3037" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="4" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ScrollViewer Margin="0" Padding="{TemplateBinding Padding}" Focusable="False">
+                                <ItemsPresenter />
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Padding" Value="8,5" />
+                        <Setter Property="Margin" Value="0,0,0,4" />
+                        <Setter Property="Background" Value="#191D22" />
+                        <Setter Property="BorderBrush" Value="#2F353D" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Border x:Name="Root"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="6">
+                                        <ContentPresenter VerticalAlignment="Center" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Root" Property="Background" Value="#2A1905" />
+                                            <Setter TargetName="Root" Property="BorderBrush" Value="#5C340A" />
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Root" Property="Background" Value="#21262C" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SettingsCheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="#CFCFCF" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource BgRoot}">
+        <Border x:Name="MainShell"
+                Margin="10"
+                Background="#0B0B0C"
+                BorderBrush="#202020"
+                BorderThickness="1"
+                CornerRadius="14"
+                Visibility="Hidden">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="230" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Background="{StaticResource BgSidebar}" BorderBrush="#202020" BorderThickness="0,0,1,0">
+                    <DockPanel x:Name="NavMenuPanel" IsEnabled="False" LastChildFill="False">
+                        <StackPanel DockPanel.Dock="Top" Margin="0,14,0,0">
+                            <StackPanel Margin="0,0,0,16" HorizontalAlignment="Center">
+                                <Border Width="82" Height="82" CornerRadius="14" BorderBrush="{StaticResource Accent}" BorderThickness="1.5" Background="#120F07">
+                                    <TextBlock Text="👻" FontSize="32" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <TextBlock Text="AvnChecker" Foreground="{StaticResource Accent}" FontSize="34" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,8,0,0" />
+                            </StackPanel>
+
+                            <StackPanel Margin="8,0,8,0">
+                                <Button x:Name="InfoNavButton" Tag="Information" Click="OnMenuClick" Style="{StaticResource NavButtonStyle}">
+                                    <StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE946;" Margin="0,0,10,0" /><TextBlock Text="Информация" /></StackPanel>
+                                </Button>
+                                <Button x:Name="AppsNavButton" Tag="Applications" Click="OnMenuClick" Style="{StaticResource NavButtonStyle}">
+                                    <StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEA80;" Margin="0,0,10,0" /><TextBlock Text="Приложения" /></StackPanel>
+                                </Button>
+                                <Button x:Name="SystemNavButton" Tag="System" Click="OnMenuClick" Style="{StaticResource NavButtonStyle}">
+                                    <StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE770;" Margin="0,0,10,0" /><TextBlock Text="О системе" /></StackPanel>
+                                </Button>
+                                <Button x:Name="TwinksNavButton" Tag="Twinks" Click="OnMenuClick" Style="{StaticResource NavButtonStyle}">
+                                    <StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE77B;" Margin="0,0,10,0" /><TextBlock Text="Твинки" /></StackPanel>
+                                </Button>
+                                <Button x:Name="ModsNavButton" Tag="Mods" Click="OnMenuClick" Style="{StaticResource NavButtonStyle}">
+                                    <StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7F8;" Margin="0,0,10,0" /><TextBlock Text="Mods" /></StackPanel>
+                                </Button>
+                                <Button x:Name="SettingsNavButton" Tag="Settings" Click="OnMenuClick" Style="{StaticResource NavButtonStyle}">
+                                    <StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" Margin="0,0,10,0" /><TextBlock Text="Настройки" /></StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel DockPanel.Dock="Bottom"
+                                    Margin="8,0,8,10"
+                                    VerticalAlignment="Bottom">
+                            <TextBlock Text="Developer"
+                                       Foreground="{StaticResource TextMuted}"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,8" />
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Style="{StaticResource CircleLinkButtonStyle}"
+                                        Background="#2F3DFF"
+                                        BorderBrush="#5E6BFF"
+                                        Margin="0,0,10,0"
+                                        Click="OnOpenWebsiteClick">
+                                    <Viewbox Width="23" Height="23">
+                                        <Path Fill="#FFFFFF"
+                                              Data="M20.665 3.717L2.94 10.554C1.73 11.04 1.737 11.715 2.72 12.017L7.272 13.437L9.029 18.998C9.346 19.872 9.19 20.218 10.115 20.218C10.829 20.218 11.143 19.893 11.543 19.508L13.733 17.378L18.287 20.738C19.127 21.202 19.732 20.963 19.941 19.961L22.961 5.741C23.267 4.511 22.491 3.951 21.665 4.326L20.665 3.717Z" />
+                                    </Viewbox>
+                                </Button>
+                                <Button Style="{StaticResource CircleLinkButtonStyle}"
+                                        Background="#FF3E4A"
+                                        BorderBrush="#FF6A74"
+                                        Click="OnOpenVkClick">
+                                    <Viewbox Width="23" Height="23">
+                                        <Path Fill="#FFFFFF"
+                                              Data="M2 3H6.8L10 14L13.2 3H18L12.4 21H7.6L2 3ZM19.2 3H23V10L27.5 3H32L26 11.3L32 21H27.4L23 13.5V21H19.2V3Z" />
+                                    </Viewbox>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+
+                <Grid Grid.Column="1" Background="{StaticResource BgMain}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            BorderBrush="#202020"
+                            BorderThickness="0,0,0,1"
+                            Background="#0F1011"
+                            Padding="14,8,10,8"
+                            MouseLeftButtonDown="OnTitleBarMouseDown">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="AvnChecker" Foreground="{StaticResource Accent}" FontWeight="SemiBold" FontSize="16" Margin="0,0,12,0" />
+                                <TextBlock x:Name="MainTitleText" Text="Информация" FontSize="16" FontWeight="SemiBold" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="v1.0" Foreground="{StaticResource TextMuted}" Margin="0,0,8,0" VerticalAlignment="Center" />
+                                <Button Style="{StaticResource TitleBarButtonStyle}" Click="OnMinimizeWindowClick">
+                                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE921;" FontSize="10" />
+                                </Button>
+                                <Button Style="{StaticResource TitleBarButtonStyle}" Click="OnMaximizeWindowClick">
+                                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE922;" FontSize="10" />
+                                </Button>
+                                <Button Style="{StaticResource CloseTitleBarButtonStyle}" Click="OnCloseWindowClick">
+                                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE8BB;" FontSize="10" />
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <Grid Margin="14,12,14,14">
+                            <Grid x:Name="InfoSection">
+                                <StackPanel>
+                                    <Border Style="{StaticResource PanelBorder}">
+                                        <StackPanel>
+                                            <TextBlock Foreground="{StaticResource Accent}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12" Text="🕹  Информация о проверке" />
+                                            <Grid>
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="220" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Grid.Row="0" Text="Статус:" Foreground="{StaticResource TextMuted}"/><TextBlock Grid.Row="0" Grid.Column="1" Text="Рабочий режим" Foreground="{StaticResource Accent}"/>
+                                                <TextBlock Grid.Row="1" Text="Назначение:" Foreground="{StaticResource TextMuted}" Margin="0,7,0,0"/><TextBlock Grid.Row="1" Grid.Column="1" Text="Проверка игроков Minecraft" Margin="0,7,0,0"/>
+                                                <TextBlock Grid.Row="2" Text="Тип:" Foreground="{StaticResource TextMuted}" Margin="0,7,0,0"/><TextBlock Grid.Row="2" Grid.Column="1" Text="Локальный чекер + Supabase" Margin="0,7,0,0"/>
+                                                <TextBlock Grid.Row="3" Text="Разработчик:" Foreground="{StaticResource TextMuted}" Margin="0,7,0,0"/><TextBlock Grid.Row="3" Grid.Column="1" Text="Avn (@avnmanager)" Margin="0,7,0,0"/>
+                                                <TextBlock Grid.Row="4" Text="Безопасность:" Foreground="{StaticResource TextMuted}" Margin="0,7,0,0"/><TextBlock Grid.Row="4" Grid.Column="1" Text="Без скрытых действий" Margin="0,7,0,0"/>
+                                                <TextBlock Grid.Row="5" Text="Версия:" Foreground="{StaticResource TextMuted}" Margin="0,7,0,0"/><TextBlock Grid.Row="5" Grid.Column="1" Text="1.0.0" Margin="0,7,0,0"/>
+                                            </Grid>
+                                            <Button Content="Обновить" Style="{StaticResource ActionButtonStyle}" Width="150" Margin="0,16,0,0" Click="OnRefreshSystemClick" />
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0" Style="{StaticResource PanelBorder}" Margin="0,0,6,0"><StackPanel><TextBlock Text="APP" Foreground="{StaticResource TextMuted}"/><TextBlock Text="AvnChecker" FontSize="28" FontWeight="SemiBold"/></StackPanel></Border>
+                                        <Border Grid.Column="1" Style="{StaticResource PanelBorder}" Margin="6,0,0,0"><StackPanel><TextBlock Text="VERSION" Foreground="{StaticResource TextMuted}"/><TextBlock Text="1.0.0" FontSize="28" FontWeight="SemiBold"/></StackPanel></Border>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid x:Name="AppsSection" Visibility="Collapsed">
+                                <StackPanel>
+                                    <Border Style="{StaticResource PanelBorder}">
+                                        <StackPanel>
+                                            <TextBlock Foreground="{StaticResource Accent}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12" Text="📦  Приложения и утилиты" />
+                                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                                <Button Content="Скачать всё"
+                                                        Style="{StaticResource ActionButtonStyle}"
+                                                        Click="OnDownloadAllToolsClick"
+                                                        Margin="0,0,8,0" />
+                                                <Button Content="Завершить проверку"
+                                                        Style="{StaticResource ActionButtonStyle}"
+                                                        Click="OnFinishCheckClick" />
+                                            </StackPanel>
+                                            <ItemsControl ItemsSource="{Binding ToolItems}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate DataType="{x:Type models:ToolDownloadItem}">
+                                                        <Border Background="#16110A" BorderBrush="#55320D" BorderThickness="1" CornerRadius="10" Width="332" Height="118" Margin="0,0,10,10" Padding="12">
+                                                            <Grid>
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="Auto"/>
+                                                                    <RowDefinition Height="Auto"/>
+                                                                    <RowDefinition Height="Auto"/>
+                                                                </Grid.RowDefinitions>
+                                                                <StackPanel>
+                                                                    <TextBlock Text="{Binding Definition.Name}" FontSize="16" FontWeight="SemiBold" />
+                                                                    <TextBlock Text="{Binding Definition.Description}" Foreground="{StaticResource TextMuted}" FontSize="12" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                                                    <TextBlock Text="{Binding Status}" Foreground="{StaticResource Accent}" FontSize="13" Margin="0,6,0,0"/>
+                                                                </StackPanel>
+                                                                <Grid Grid.Row="2" Margin="0,10,0,0">
+                                                                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                                                    <Button Grid.Column="0" Content="Скачать" Tag="{Binding}" Click="OnDownloadToolClick" Padding="8,4" Margin="0,0,6,0">
+                                                                        <Button.Style>
+                                                                            <Style TargetType="Button" BasedOn="{StaticResource ActionButtonStyle}">
+                                                                                <Setter Property="IsEnabled" Value="True" />
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                                                                                        <Setter Property="IsEnabled" Value="False" />
+                                                                                        <Setter Property="Opacity" Value="0.65" />
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </Button.Style>
+                                                                    </Button>
+                                                                    <Button Grid.Column="1" Content="Открыть" Style="{StaticResource ActionButtonStyle}" Tag="{Binding}" Click="OnOpenToolClick" Padding="8,4" Margin="6,0,0,0" IsEnabled="{Binding CanOpen}" />
+                                                                </Grid>
+                                                            </Grid>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid x:Name="SystemSection" Visibility="Collapsed">
+                                <StackPanel>
+                                    <Border Style="{StaticResource PanelBorder}">
+                                        <StackPanel>
+                                            <TextBlock Foreground="{StaticResource Accent}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12" Text="🖥  Операционная система" />
+                                            <Grid>
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="250" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Grid.Row="0" Text="Пользователь:" Foreground="{StaticResource TextMuted}"/><TextBlock Grid.Row="0" Grid.Column="1" x:Name="UserNameText"/>
+                                                <TextBlock Grid.Row="1" Text="Имя ПК:" Foreground="{StaticResource TextMuted}" Margin="0,6,0,0"/><TextBlock Grid.Row="1" Grid.Column="1" x:Name="MachineNameText" Margin="0,6,0,0"/>
+                                                <TextBlock Grid.Row="2" Text="Windows user:" Foreground="{StaticResource TextMuted}" Margin="0,6,0,0"/><TextBlock Grid.Row="2" Grid.Column="1" x:Name="WindowsUserText" Margin="0,6,0,0"/>
+                                                <TextBlock Grid.Row="3" Text="Экраны:" Foreground="{StaticResource TextMuted}" Margin="0,6,0,0"/><TextBlock Grid.Row="3" Grid.Column="1" x:Name="ScreensCountText" Margin="0,6,0,0"/>
+                                                <TextBlock Grid.Row="4" Text="Аптайм:" Foreground="{StaticResource TextMuted}" Margin="0,6,0,0"/><TextBlock Grid.Row="4" Grid.Column="1" x:Name="UptimeText" Margin="0,6,0,0"/>
+                                                <TextBlock Grid.Row="5" Text="ОС:" Foreground="{StaticResource TextMuted}" Margin="0,6,0,0"/><TextBlock Grid.Row="5" Grid.Column="1" x:Name="OsNameText" Margin="0,6,0,0"/>
+                                                <TextBlock Grid.Row="6" Text="Дата установки:" Foreground="{StaticResource TextMuted}" Margin="0,6,0,0"/><TextBlock Grid.Row="6" Grid.Column="1" x:Name="InstallDateText" Margin="0,6,0,0"/>
+                                                <TextBlock Grid.Row="7" Text="Версия Windows:" Foreground="{StaticResource TextMuted}" Margin="0,6,0,0"/><TextBlock Grid.Row="7" Grid.Column="1" x:Name="WindowsVersionText" Margin="0,6,0,0"/>
+                                                <TextBlock Grid.Row="8" Text="Сборка:" Foreground="{StaticResource TextMuted}" Margin="0,6,0,0"/><TextBlock Grid.Row="8" Grid.Column="1" x:Name="WindowsBuildText" Margin="0,6,0,0"/>
+                                                <TextBlock Grid.Row="9" Text="CPU/GPU:" Foreground="{StaticResource TextMuted}" Margin="0,6,0,0"/><TextBlock Grid.Row="9" Grid.Column="1" x:Name="CpuText" Margin="0,6,0,0"/>
+                                                <TextBlock Grid.Row="10" Text="GPU детали:" Foreground="{StaticResource TextMuted}" Margin="0,6,0,0"/><TextBlock Grid.Row="10" Grid.Column="1" x:Name="GpuText" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                                                <TextBlock Grid.Row="11" Text="Мат.плата / VM / HWID / Logs:" Foreground="{StaticResource TextMuted}" Margin="0,6,0,0"/><StackPanel Grid.Row="11" Grid.Column="1" Margin="0,6,0,0"><TextBlock x:Name="MotherboardText"/><TextBlock x:Name="VmText"/><TextBlock x:Name="HwidText" TextWrapping="Wrap"/><TextBlock x:Name="EventLogsText" TextWrapping="Wrap"/></StackPanel>
+                                            </Grid>
+                                            <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                                                <Border Width="74" Height="74" CornerRadius="37" Background="#1B1208" BorderBrush="#55320D" BorderThickness="1"><TextBlock x:Name="AvatarInitialText" FontSize="28" FontWeight="Bold" Foreground="{StaticResource Accent}" HorizontalAlignment="Center" VerticalAlignment="Center" Text="A"/></Border>
+                                                <Button Content="Обновить" Style="{StaticResource ActionButtonStyle}" Width="150" Height="38" Margin="12,18,0,0" Click="OnRefreshSystemClick" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+                            <Grid x:Name="TwinksSection" Visibility="Collapsed">
+                                <StackPanel>
+                                    <Border Style="{StaticResource PanelBorder}">
+                                        <StackPanel>
+                                            <TextBlock Foreground="{StaticResource Accent}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12" Text="🎮  Твинки и аккаунты" />
+                                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                                <Button Content="Пересканировать" Style="{StaticResource ActionButtonStyle}" Click="OnRescanTwinksClick" Margin="0,0,8,0" />
+                                                <Button Content="Скопировать" Style="{StaticResource ActionButtonStyle}" Click="OnCopyTwinksClick" Margin="0,0,8,0" />
+                                                <Button Content="Скачать" Style="{StaticResource ActionButtonStyle}" Click="OnExportTwinksClick" />
+                                                <TextBlock x:Name="TwinksStatusText" Foreground="{StaticResource TextMuted}" Margin="12,6,0,0" />
+                                            </StackPanel>
+                                            <DataGrid x:Name="TwinksGrid" Height="520" ItemsSource="{Binding Twinks}">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Ник" Binding="{Binding Nick}" Width="180" />
+                                                    <DataGridTextColumn Header="Источник" Binding="{Binding Source}" Width="220" />
+                                                    <DataGridTextColumn Header="Путь" Binding="{Binding Path}" Width="*" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid x:Name="ModsSection" Visibility="Collapsed">
+                                <StackPanel>
+                                    <Border Style="{StaticResource PanelBorder}">
+                                        <StackPanel>
+                                            <TextBlock Foreground="{StaticResource Accent}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12" Text="📚  Mods и пакеты" />
+                                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                                <Button Content="Сканировать" Style="{StaticResource ActionButtonStyle}" Click="OnScanModsClick" Margin="0,0,8,0" />
+                                                <TextBlock Text="●"
+                                                           Foreground="#6EE089"
+                                                           FontSize="16"
+                                                           Margin="2,4,3,0" />
+                                                <TextBlock Text="зелёный: safe" Foreground="#9FB79A" Margin="0,6,8,0" />
+                                                <TextBlock Text="●"
+                                                           Foreground="#F3C96B"
+                                                           FontSize="16"
+                                                           Margin="0,4,3,0" />
+                                                <TextBlock Text="жёлтый: unknown" Foreground="#C9BC96" Margin="0,6,8,0" />
+                                                <TextBlock Text="●"
+                                                           Foreground="#FF8C99"
+                                                           FontSize="16"
+                                                           Margin="0,4,3,0" />
+                                                <TextBlock Text="красный: cheat" Foreground="#D9A2AA" Margin="0,6,8,0" />
+                                                <TextBlock x:Name="ModsStatusText" Foreground="{StaticResource TextMuted}" Margin="0,6,0,0" />
+                                            </StackPanel>
+                                            <DataGrid x:Name="ModsGrid"
+                                                      Height="520"
+                                                      ItemsSource="{Binding Mods}"
+                                                      RowStyle="{StaticResource ModsRiskRowStyle}"
+                                                      MouseDoubleClick="OnModsRowDoubleClick">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Файл" Binding="{Binding File}" Width="220" />
+                                                    <DataGridTextColumn Header="Размер (МБ)" Binding="{Binding SizeMb}" Width="110" />
+                                                    <DataGridTextColumn Header="Риск" Binding="{Binding RiskLevel}" Width="90" />
+                                                    <DataGridTextColumn Header="Причина" Binding="{Binding RiskReason}" Width="210" />
+                                                    <DataGridTextColumn Header="Путь" Binding="{Binding Path}" Width="*" />
+                                                    <DataGridTextColumn Header="Клиент" Binding="{Binding Client}" Width="120" />
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid x:Name="SettingsSection" Visibility="Collapsed">
+                                <StackPanel>
+                                    <Border Style="{StaticResource PanelBorder}">
+                                        <StackPanel>
+                                            <TextBlock Foreground="{StaticResource Accent}" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,8" Text="⚙  Полезные настройки" />
+                                            <TextBlock Foreground="{StaticResource TextMuted}"
+                                                       Text="Управление источниками скана, логами и конфигом без ручного редактирования файлов."
+                                                       TextWrapping="Wrap"
+                                                       Margin="0,0,0,12" />
+
+                                            <Grid Margin="0,0,0,12">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <Border Grid.Column="0" Background="#121418" BorderBrush="#2A2F36" BorderThickness="1" CornerRadius="10" Padding="12" Margin="0,0,6,0">
+                                                    <StackPanel>
+                                                        <TextBlock Text="Интерфейс и логи" FontWeight="SemiBold" Foreground="#EAEAEA" Margin="0,0,0,8" />
+                                                        <TextBlock Text="Язык интерфейса" Foreground="{StaticResource TextMuted}" />
+                                                        <ComboBox x:Name="LanguageComboBox" Height="32" Margin="0,5,0,10" Style="{StaticResource SettingsComboBoxStyle}">
+                                                            <ComboBoxItem Content="Русский" Tag="ru" />
+                                                            <ComboBoxItem Content="English" Tag="en" />
+                                                        </ComboBox>
+
+                                                        <TextBlock Text="Уровень логирования" Foreground="{StaticResource TextMuted}" />
+                                                        <ComboBox x:Name="LoggingModeComboBox" Height="32" Margin="0,5,0,12" Style="{StaticResource SettingsComboBoxStyle}">
+                                                            <ComboBoxItem Content="minimal" Tag="minimal" />
+                                                            <ComboBoxItem Content="verbose" Tag="verbose" />
+                                                        </ComboBox>
+
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Button Content="Открыть config"
+                                                                    Style="{StaticResource ActionButtonStyle}"
+                                                                    Click="OnOpenConfigClick"
+                                                                    Margin="0,0,8,0" />
+                                                            <Button Content="Открыть логи"
+                                                                    Style="{StaticResource ActionButtonStyle}"
+                                                                    Click="OnOpenLogsClick" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Border>
+
+                                                <Border Grid.Column="1" Background="#121418" BorderBrush="#2A2F36" BorderThickness="1" CornerRadius="10" Padding="12" Margin="6,0,0,0">
+                                                    <StackPanel>
+                                                        <TextBlock Text="Источники скана модов" FontWeight="SemiBold" Foreground="#EAEAEA" Margin="0,0,0,8" />
+                                                        <CheckBox x:Name="IncludeDownloadsCheckBox" Content="Сканировать Downloads" Style="{StaticResource SettingsCheckBoxStyle}" />
+                                                        <CheckBox x:Name="IncludeDesktopCheckBox" Content="Сканировать Desktop" Style="{StaticResource SettingsCheckBoxStyle}" />
+                                                        <CheckBox x:Name="IncludeDocumentsCheckBox" Content="Сканировать Documents" Style="{StaticResource SettingsCheckBoxStyle}" />
+                                                        <CheckBox x:Name="IncludeOneDriveCheckBox" Content="Учитывать OneDrive папки" Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                                                        <TextBlock Text="Добавить кастомный путь" Foreground="{StaticResource TextMuted}" Margin="0,4,0,0" />
+                                                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                                            <TextBox x:Name="CustomPathTextBox" Height="32" Width="290" Style="{StaticResource SettingsTextBoxStyle}" />
+                                                            <Button Content="Добавить"
+                                                                    Style="{StaticResource ActionButtonStyle}"
+                                                                    Click="OnAddCustomPathClick"
+                                                                    Margin="8,0,0,0" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+
+                                            <Grid Margin="0,0,0,12">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="200" />
+                                                </Grid.ColumnDefinitions>
+                                                <ListBox x:Name="CustomPathsListBox"
+                                                         ItemsSource="{Binding CustomPaths}"
+                                                         Height="150"
+                                                         Style="{StaticResource SettingsListBoxStyle}" />
+                                                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                                    <Button Content="Удалить путь" Style="{StaticResource ActionButtonStyle}" Click="OnRemoveCustomPathClick" Margin="0,0,0,8" />
+                                                    <Button Content="Сохранить" Style="{StaticResource ActionButtonStyle}" Click="OnApplySettingsClick" Margin="0,0,0,8" />
+                                                    <Button Content="Экспорт конфигурации" Style="{StaticResource ActionButtonStyle}" Click="OnExportConfigClick" Margin="0,0,0,8" />
+                                                    <Button Content="Сбросить настройки" Style="{StaticResource ActionButtonStyle}" Click="OnResetConfigClick" />
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <Grid Visibility="Collapsed">
+                                                <Grid.ColumnDefinitions><ColumnDefinition Width="240"/><ColumnDefinition Width="220"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                                                <StackPanel>
+                                                    <TextBlock Text="Ник игрока (авто)" Foreground="{StaticResource TextMuted}" />
+                                                    <TextBox x:Name="PlayerNickTextBox" Height="32" Margin="0,5,0,0" IsReadOnly="True" Style="{StaticResource SettingsTextBoxStyle}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                                    <TextBlock Text="Статус (авто)" Foreground="{StaticResource TextMuted}" />
+                                                    <ComboBox x:Name="CheckStatusComboBox" Height="32" Margin="0,5,0,0" IsEnabled="False" Style="{StaticResource SettingsComboBoxStyle}">
+                                                        <ComboBoxItem Content="clean" Tag="clean" />
+                                                        <ComboBoxItem Content="probably_cheat" Tag="probably_cheat" />
+                                                        <ComboBoxItem Content="cheat" Tag="cheat" />
+                                                    </ComboBox>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2" Margin="10,0,0,0">
+                                                    <TextBlock Text="Комментарий (авто)" Foreground="{StaticResource TextMuted}" />
+                                                    <TextBox x:Name="NotesTextBox" Height="32" Margin="0,5,0,0" IsReadOnly="True" Style="{StaticResource SettingsTextBoxStyle}" />
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <Border Background="#10161C" BorderBrush="#223342" BorderThickness="1" CornerRadius="8" Padding="10,8" Margin="0,2,0,0">
+                                                <StackPanel>
+                                                    <TextBlock Text="Авто-отправка включена: после анализа процесс отправляется в Supabase без ручного подтверждения."
+                                                               Foreground="{StaticResource TextMuted}"
+                                                               TextWrapping="Wrap" />
+                                                    <TextBlock x:Name="SubmitStatusText" Foreground="{StaticResource Accent}" Margin="0,8,0,0" />
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </ScrollViewer>
+
+                    <Border x:Name="SubmitProgressPanel"
+                            Grid.Row="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Panel.ZIndex="300"
+                            Margin="0,0,16,16"
+                            Background="#121314"
+                            BorderBrush="#3A260B"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="10,8"
+                            Visibility="Collapsed">
+                        <StackPanel Width="260">
+                            <TextBlock x:Name="SubmitProgressLabel" Text="Ожидание авто-отправки..." FontSize="13" Foreground="{StaticResource TextMuted}" />
+                            <Grid Margin="0,6,0,0">
+                                <ProgressBar x:Name="SubmitProgressBar"
+                                             Style="{StaticResource UploadProgressBarStyle}"
+                                             Height="10"
+                                             Minimum="0"
+                                             Maximum="100"
+                                             Value="0" />
+                                <TextBlock x:Name="SubmitProgressPercent"
+                                           Text="0%"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="11"
+                                           FontWeight="SemiBold"
+                                           Foreground="#E6E6E6" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="SubmitResultPanel"
+                            Grid.Row="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Panel.ZIndex="301"
+                            Margin="0,0,16,16"
+                            Background="#132315"
+                            BorderBrush="#2F5A2B"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="10,8"
+                            Visibility="Collapsed">
+                        <Grid Width="290">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Width="24"
+                                    Height="24"
+                                    CornerRadius="12"
+                                    Background="#1C3A1D"
+                                    BorderBrush="#3B6E35"
+                                    BorderThickness="1">
+                                <TextBlock x:Name="SubmitResultIcon"
+                                           Text="✓"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="#B8F4AA"
+                                           FontWeight="Bold"
+                                           FontSize="14" />
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                <TextBlock x:Name="SubmitResultTitle"
+                                           Text="Отправка завершена"
+                                           FontWeight="SemiBold"
+                                           FontSize="13"
+                                           Foreground="#E4FAD9" />
+                                <TextBlock x:Name="SubmitResultText"
+                                           Text="Отчёт ушёл на сервер."
+                                           FontSize="12"
+                                           Foreground="#A6B49E"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <Grid x:Name="FinishCheckOverlay"
+                      Grid.ColumnSpan="2"
+                      Panel.ZIndex="500"
+                      Background="#A0111318"
+                      Visibility="Collapsed">
+                    <Border Width="560"
+                            Padding="22"
+                            CornerRadius="14"
+                            Background="#121418"
+                            BorderBrush="#333840"
+                            BorderThickness="1.5"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <Border Width="32"
+                                        Height="32"
+                                        CornerRadius="16"
+                                        Background="#3A2014"
+                                        BorderBrush="#A8601F"
+                                        BorderThickness="1">
+                                    <TextBlock Text="!"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="17"
+                                               FontWeight="Bold"
+                                               Foreground="#FFB464" />
+                                </Border>
+                                <TextBlock Text="Завершить проверку?"
+                                           FontSize="24"
+                                           FontWeight="SemiBold"
+                                           Margin="10,1,0,0" />
+                            </StackPanel>
+
+                            <TextBlock Text="Будут удалены все скачанные утилиты, логи и папка AvnChecker с этого ПК."
+                                       Foreground="{StaticResource TextMuted}"
+                                       TextWrapping="Wrap" />
+                            <TextBlock Text="Действие необратимо."
+                                       Margin="0,8,0,0"
+                                       Foreground="#FF9D9D"
+                                       FontWeight="SemiBold" />
+
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Right"
+                                        Margin="0,20,0,0">
+                                <Button Content="Отмена"
+                                        Width="130"
+                                        Style="{StaticResource SecondaryActionButtonStyle}"
+                                        Click="OnCancelFinishCheckClick"
+                                        Margin="0,0,8,0" />
+                                <Button Content="Удалить и выйти"
+                                        Width="170"
+                                        Style="{StaticResource ActionButtonStyle}"
+                                        Click="OnConfirmFinishCheckClick" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Grid x:Name="CodeOverlayPanel" Background="#F0080808">
+            <Border Width="520" Padding="22" CornerRadius="14" Background="#101114" BorderBrush="#2A2E36" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel>
+                    <TextBlock Text="Введите одноразовый код" FontSize="26" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                    <TextBlock Text="Код из 8 символов (пример: 82EE8F1F)" Foreground="{StaticResource TextMuted}" Margin="0,6,0,14" HorizontalAlignment="Center" />
+                    <TextBox x:Name="AccessCodeTextBox"
+                             Height="46"
+                             FontSize="26"
+                             CharacterCasing="Upper"
+                             MaxLength="8"
+                             TextChanged="OnAccessCodeTextChanged"
+                             HorizontalContentAlignment="Center"
+                             VerticalContentAlignment="Center"
+                             Background="#0C0D10"
+                             Foreground="#EDEDED"
+                             BorderBrush="#3A3F48"
+                             BorderThickness="1.5"
+                             CaretBrush="{StaticResource Accent}" />
+                    <Button x:Name="ValidateCodeButton" Content="Подтвердить" Style="{StaticResource ActionButtonStyle}" Height="40" Margin="0,14,0,0" Click="OnValidateCodeClick" />
+                    <TextBlock x:Name="CodeValidationText"
+                               Foreground="{StaticResource Accent}"
+                               Text="Ожидание кода"
+                               HorizontalAlignment="Center"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               MaxWidth="460"
+                               Margin="0,12,0,0" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <StackPanel x:Name="OverlayWindowButtons"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Panel.ZIndex="200"
+                    Margin="0,14,18,0">
+            <Button Style="{StaticResource TitleBarButtonStyle}" Click="OnMinimizeWindowClick">
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE921;" FontSize="10" />
+            </Button>
+            <Button Style="{StaticResource TitleBarButtonStyle}" Click="OnMaximizeWindowClick">
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE922;" FontSize="10" />
+            </Button>
+            <Button Style="{StaticResource CloseTitleBarButtonStyle}" Click="OnCloseWindowClick">
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE8BB;" FontSize="10" />
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>
